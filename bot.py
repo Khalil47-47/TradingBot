@@ -83,16 +83,14 @@ st.markdown("""
         margin-bottom: 20px; 
     }
 
-    /* Centered Upload Area Styling */
+    /* Perfectly Centered Upload Section with No Extra Borders */
     .upload-section {
-        background: rgba(0, 136, 255, 0.06);
-        border: 2px dashed rgba(0, 136, 255, 0.5);
-        padding: 20px;
-        border-radius: 16px;
+        background: rgba(0, 136, 255, 0.04);
+        padding: 10px 0;
+        border-radius: 12px;
         text-align: center;
-        margin-top: 15px;
+        margin-top: 10px;
         margin-bottom: 15px;
-        box-shadow: inset 0 0 15px rgba(0, 136, 255, 0.1);
     }
 
     .stSelectbox label, .stRadio label, .stFileUploader label { 
@@ -184,9 +182,11 @@ with col_asset:
 with col_exp:
     tf = st.selectbox("3. Expiry Time (Timer)", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-# 3. CENTERED BELOW: Beautiful Screenshot Upload Section
+# 3. PERFECTLY CENTERED BELOW: Screenshot Upload Section (No Empty Dotted Box)
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<p style='color: #f1f5f9; font-weight: 700; font-size: 13px; text-align: center; margin-bottom: 5px;'>📸 4. Upload Chart Screenshot (30-100 Candles)</p>", unsafe_allow_html=True)
+
 st.markdown('<div class="upload-section">', unsafe_allow_html=True)
-st.markdown("<p style='color: #0088ff; font-weight: 800; margin-bottom: 5px;'>📸 4. Upload Chart Screenshot (30-100 Candles)</p>", unsafe_allow_html=True)
 chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="centered_screenshot_uploader")
 st.markdown('</div>', unsafe_allow_html=True)
 
