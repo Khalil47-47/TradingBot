@@ -54,43 +54,28 @@ st.markdown("""
         z-index: 1;
     }
     
-    .welcome-banner {
-        background: linear-gradient(135deg, #041e3a 0%, #0d1117 100%);
-        border: 1px solid #0088ff;
-        padding: 18px;
-        border-radius: 14px;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .welcome-title {
-        color: #0088ff;
-        font-size: 20px;
-        font-weight: 900;
-        letter-spacing: 1px;
-        margin: 0;
-    }
-    
     .active-users-badge { 
         text-align: center; 
         background-color: #04182f; 
         border: 1px solid #0088ff; 
         color: #0088ff; 
-        padding: 8px; 
+        padding: 10px; 
         border-radius: 10px; 
-        font-size: 12px; 
+        font-size: 13px; 
         font-weight: 700; 
         margin-bottom: 20px; 
     }
 
-    /* Perfectly Centered Upload Section with No Extra Borders */
-    .upload-section {
-        background: rgba(0, 136, 255, 0.04);
-        padding: 10px 0;
-        border-radius: 12px;
+    /* Professional Centered Bracket for Upload Section */
+    .upload-bracket-box {
+        background: linear-gradient(135deg, rgba(16, 24, 38, 0.9) 0%, rgba(8, 13, 22, 0.9) 100%);
+        border: 2px dashed rgba(0, 136, 255, 0.5);
+        padding: 22px;
+        border-radius: 16px;
         text-align: center;
-        margin-top: 10px;
+        margin-top: 15px;
         margin-bottom: 15px;
+        box-shadow: 0 0 20px rgba(0, 136, 255, 0.15);
     }
 
     .stSelectbox label, .stRadio label, .stFileUploader label { 
@@ -139,16 +124,10 @@ st.markdown("""
 if 'active_users' not in st.session_state:
     st.session_state.active_users = random.randint(180, 250)
 
-# --- SINGLE CENTRALIZED BRACKET CONTAINER ---
+# --- SINGLE CENTRALIZED CONTAINER ---
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-st.markdown("""
-    <div class="welcome-banner">
-        <h1 class="welcome-title">🦅 ENZO PRO VISION ROBOT</h1>
-        <p style="color: #cbd5e1; font-size: 12px; margin: 3px 0 0 0;">Unified Control Panel & Screenshot Scanner</p>
-    </div>
-""", unsafe_allow_html=True)
-
+# Active users badge directly at the top inside container
 st.markdown(f"""
     <div class="active-users-badge">
         🟢 Live Status: {st.session_state.active_users} Traders Active Right Now!
@@ -182,11 +161,10 @@ with col_asset:
 with col_exp:
     tf = st.selectbox("3. Expiry Time (Timer)", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-# 3. PERFECTLY CENTERED BELOW: Screenshot Upload Section (No Empty Dotted Box)
+# 3. PROFESSIONAL CENTERED UPLOAD BRACKET (Text Removed)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='color: #f1f5f9; font-weight: 700; font-size: 13px; text-align: center; margin-bottom: 5px;'>📸 4. Upload Chart Screenshot (30-100 Candles)</p>", unsafe_allow_html=True)
-
-st.markdown('<div class="upload-section">', unsafe_allow_html=True)
+st.markdown('<div class="upload-bracket-box">', unsafe_allow_html=True)
+st.markdown("<p style='color: #0088ff; font-weight: 800; font-size: 14px; margin-bottom: 8px;'>📸 Tap to Upload Chart Screenshot</p>", unsafe_allow_html=True)
 chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="centered_screenshot_uploader")
 st.markdown('</div>', unsafe_allow_html=True)
 
