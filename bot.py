@@ -44,12 +44,8 @@ st.markdown("""
     .main-container { 
         max-width: 600px;
         margin: 20px auto;
-        background: linear-gradient(135deg, rgba(13, 17, 23, 0.98) 0%, rgba(5, 8, 15, 0.98) 100%); 
-        backdrop-filter: blur(10px);
-        padding: 30px; 
-        border-radius: 20px; 
-        border: 1px solid rgba(0, 136, 255, 0.4); 
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85); 
+        background: transparent; 
+        padding: 10px; 
         position: relative;
         z-index: 1;
     }
@@ -59,23 +55,33 @@ st.markdown("""
         background-color: #04182f; 
         border: 1px solid #0088ff; 
         color: #0088ff; 
-        padding: 10px; 
-        border-radius: 10px; 
-        font-size: 13px; 
+        padding: 12px; 
+        border-radius: 12px; 
+        font-size: 14px; 
         font-weight: 700; 
         margin-bottom: 20px; 
+        box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);
     }
 
-    /* Professional Centered Bracket for Upload Section */
-    .upload-bracket-box {
-        background: linear-gradient(135deg, rgba(16, 24, 38, 0.9) 0%, rgba(8, 13, 22, 0.9) 100%);
-        border: 2px dashed rgba(0, 136, 255, 0.5);
-        padding: 22px;
+    .control-panel-box {
+        background: linear-gradient(135deg, rgba(13, 17, 23, 0.98) 0%, rgba(5, 8, 15, 0.98) 100%); 
+        backdrop-filter: blur(10px);
+        padding: 25px; 
+        border-radius: 20px; 
+        border: 1px solid rgba(0, 136, 255, 0.4); 
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85); 
+    }
+
+    /* Sketch style centered upload box with arrow */
+    .upload-box-sketch {
+        background: linear-gradient(135deg, rgba(16, 24, 38, 0.95) 0%, rgba(8, 13, 22, 0.95) 100%);
+        border: 2px dashed #0088ff;
+        padding: 25px 20px;
         border-radius: 16px;
         text-align: center;
         margin-top: 15px;
         margin-bottom: 15px;
-        box-shadow: 0 0 20px rgba(0, 136, 255, 0.15);
+        box-shadow: 0 0 25px rgba(0, 136, 255, 0.2);
     }
 
     .stSelectbox label, .stRadio label, .stFileUploader label { 
@@ -124,22 +130,22 @@ st.markdown("""
 if 'active_users' not in st.session_state:
     st.session_state.active_users = random.randint(180, 250)
 
-# --- SINGLE CENTRALIZED CONTAINER ---
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-# Active users badge directly at the top inside container
 st.markdown(f"""
     <div class="active-users-badge">
         🟢 Live Status: {st.session_state.active_users} Traders Active Right Now!
     </div>
 """, unsafe_allow_html=True)
 
+st.markdown('<div class="control-panel-box">', unsafe_allow_html=True)
+
 st.markdown("### 🏛️ Eagle Eye Vision Control Panel")
 
-# 1. TOP: Broker Selection
+# 1. Top Broker Selection (Quotex & Pocket Option side by side)
 broker = st.radio("1. Select Broker", ["Quotex", "Pocket Option"], horizontal=True)
 
-# 2. BELOW BROKER: Asset (Pair) and Expiry Time (Timer) in 2 columns
+# 2. Below Broker: Trading Asset (Pair) and Expiry Time (Timer) in 2 columns
 col_asset, col_exp = st.columns(2)
 
 if broker == "Quotex":
@@ -161,17 +167,18 @@ with col_asset:
 with col_exp:
     tf = st.selectbox("3. Expiry Time (Timer)", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-# 3. PROFESSIONAL CENTERED UPLOAD BRACKET (Text Removed)
+# 3. Center Upload Box with Upward Arrow matching your drawing
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown('<div class="upload-bracket-box">', unsafe_allow_html=True)
-st.markdown("<p style='color: #0088ff; font-weight: 800; font-size: 14px; margin-bottom: 8px;'>📸 Tap to Upload Chart Screenshot</p>", unsafe_allow_html=True)
-chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="centered_screenshot_uploader")
+st.markdown('<div class="upload-box-sketch">', unsafe_allow_html=True)
+st.markdown("<div style='font-size: 26px; color: #0088ff; margin-bottom: 2px;'>⬆️</div>", unsafe_allow_html=True)
+st.markdown("<p style='color: #0088ff; font-weight: 800; font-size: 14px; margin-bottom: 8px;'>UPLOAD CHART SCREENSHOT</p>", unsafe_allow_html=True)
+chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="sketch_upload_box")
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
 
-# --- POP-UP SIGNAL AREA INSIDE THE SAME CONTAINER ---
+# --- POP-UP SIGNAL AREA ---
 if gen_btn:
     if chart_screenshot is None:
         st.warning("⚠️ Please upload a chart screenshot first!")
@@ -213,4 +220,5 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
         if st.button("Submit Result"):
             st.success("✅ Feedback saved successfully!")
 
+st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
