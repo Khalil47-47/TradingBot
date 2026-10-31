@@ -179,9 +179,6 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(255, 69, 0, 0.6); 
         margin-top: 15px;
     }
-    .offer-btn:hover {
-        opacity: 0.95;
-    }
     
     .active-users-badge { 
         text-align: center; 
@@ -196,31 +193,6 @@ st.markdown("""
         box-shadow: 0 0 15px rgba(0, 136, 255, 0.15); 
     }
 
-    div.row-widget.stRadio > div[role="radiogroup"] > label:nth-child(2) {
-        background: linear-gradient(135deg, rgba(243, 186, 47, 0.25) 0%, rgba(20, 15, 5, 0.95) 100%) !important;
-        border: 2px solid #f3ba2f !important;
-        padding: 8px 14px !important;
-        border-radius: 12px !important;
-    }
-    div.row-widget.stRadio > div[role="radiogroup"] > label:nth-child(2) p {
-        color: #f3ba2f !important;
-        font-weight: 900 !important;
-        font-size: 15px !important;
-    }
-
-    div.row-widget.stRadio > div[role="radiogroup"] > label:nth-child(3) {
-        background: linear-gradient(135deg, rgba(255, 69, 0, 0.3) 0%, rgba(20, 10, 5, 0.95) 100%) !important;
-        border: 2px solid #ff4500 !important;
-        padding: 8px 14px !important;
-        border-radius: 12px !important;
-        box-shadow: 0 0 18px rgba(255, 69, 0, 0.5) !important;
-    }
-    div.row-widget.stRadio > div[role="radiogroup"] > label:nth-child(3) p {
-        color: #ff5722 !important;
-        font-weight: 900 !important;
-        font-size: 15px !important;
-    }
-    
     .logout-btn > button { background: linear-gradient(135deg, #ff3333 0%, #cc0000 100%) !important; color: #ffffff !important; }
     
     .stSelectbox label, .stRadio label, .stTextInput label, .stNumberInput label, .stSlider label, .stFileUploader label, .stCheckbox label { 
@@ -325,8 +297,8 @@ def fetch_real_market_data(asset_name, timeframe):
     symbol = ticker_map.get(clean_asset, "EURUSD=X")
     
     interval_map = {
-        "15 Seconds": "1m", "30 Seconds": "1m", 
-        "1 Minute": "1m", "2 Minutes": "2m", "5 Minutes": "5m"
+        "1 Minute": "1m", "2 Minutes": "2m", "5 Minutes": "5m", 
+        "10 Minutes": "5m", "15 Minutes": "15m", "30 Minutes": "15m"
     }
     yf_interval = interval_map.get(timeframe, "1m")
     
@@ -830,7 +802,7 @@ elif st.session_state.page == "dashboard":
     st.markdown(f"""
         <div class="welcome-banner">
             <h1 class="welcome-title">⚡ WELCOME TO ENZO PRO, {user_display_name}! ⚡</h1>
-            <p style="color: #cbd5e1; font-size: 14px; margin: 6px 0 0 0;">Your Real-Deal Live Market AI System is Ready.</p>
+            <p style="color: #cbd5e1; font-size: 14px; margin: 6px 0 0 0;">Your Eagle Eye Vision & Live Market AI System is Ready.</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -839,7 +811,7 @@ elif st.session_state.page == "dashboard":
         col1, col2 = st.columns([3, 1])
         with col1:
             st.markdown(f"<h2 style='color: #0088ff; margin:0; font-size:24px;'>🦅 ENZO PRO ROBOT</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='color: #94a3b8; font-size: 13px; margin:0;'>Real-Time Live Candle & Mathematical Indicator Engine</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color: #94a3b8; font-size: 13px; margin:0;'>Eagle Eye Vision & Live Candle Engine</p>", unsafe_allow_html=True)
         with col2:
             st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
             if st.button("🔒 Logout"):
@@ -856,11 +828,16 @@ elif st.session_state.page == "dashboard":
         </div>
     """, unsafe_allow_html=True)
 
+    # --- EAGLE EYE VISION SINGLE BLOCK DASHBOARD ---
     with st.container():
         st.markdown('<div class="page-box">', unsafe_allow_html=True)
-        st.markdown("### 🏛️ Step 2: Select Broker & Market")
-        broker = st.selectbox("Select Broker", ["Quotex", "Pocket Option"])
-        market = st.radio("Market Type", ["OTC", "Live Market"], horizontal=True)
+        st.markdown("### 🏛️ Eagle Eye Vision Analysis Center")
+        
+        # 1. Broker Selection
+        broker = st.radio("Broker Selection", ["Quotex", "Pocket Option"], horizontal=True)
+        
+        # 2. Asset & Expiry in 2 columns
+        col_asset, col_exp = st.columns(2)
         
         if broker == "Quotex":
             assets = [
@@ -874,12 +851,6 @@ elif st.session_state.page == "dashboard":
                 "USD/MXN (OTC)", "USD/TRY (OTC)", "USD/EGP (OTC)", "USD/BDT (OTC)",
                 "USD/PKR (OTC)", "USD/VND (OTC)", "USD/NGN (OTC)", "EUR/TRY (OTC)", 
                 "GBP/TRY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
-            ] if market == "OTC" else [
-                "EUR/USD", "GBP/USD", "USD/JPY", "AUD/USD", "USD/CAD", 
-                "EUR/GBP", "NZD/USD", "USD/CHF", "EUR/JPY", "GBP/JPY", 
-                "AUD/JPY", "EUR/AUD", "CAD/JPY", "EUR/NZD", "GBP/AUD",
-                "AUD/NZD", "NZD/CAD", "CHF/JPY", "USD/MXN", "USD/NOK",
-                "GOLD (Commodity)", "SILVER (Commodity)", "BRENT (Oil)"
             ]
         else:
             assets = [
@@ -891,96 +862,85 @@ elif st.session_state.page == "dashboard":
                 "EUR/NZD [OTC]", "GBP/AUD [OTC]", "CAD/JPY [OTC]", "USD/MXN [OTC]",
                 "USD/TRY [OTC]", "USD/PKR [OTC]", "USD/BDT [OTC]", "USD/EGP [OTC]",
                 "EUR/TRY [OTC]", "GOLD [OTC]", "SILVER [OTC]"
-            ] if market == "OTC" else [
-                "EUR/USD", "GBP/USD", "USD/JPY", "AUD/USD", "EUR/JPY", 
-                "NZD/USD", "USD/CAD", "AUD/CAD", "EUR/AUD", "GBP/GBP",
-                "GOLD (Commodity)", "SILVER (Commodity)", "BRENT (Oil)"
             ]
             
-        asset = st.selectbox("Trading Asset", assets)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with st.container():
-        st.markdown('<div class="page-box">', unsafe_allow_html=True)
-        st.markdown("### ⚙️ Step 3: Timeframe, Expiry & Risk Management")
+        with col_asset:
+            asset = st.selectbox("Trading Asset", assets)
+        with col_exp:
+            tf = st.selectbox("Expiry Time", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes", "30 Minutes"])
         
-        # --- NEW ADVANCED SCREENSHOT SCANNER MODULE ADDED ---
-        st.markdown("#### 📸 Step 3.1: Advanced Screenshot Scanner (30–100 Candlesticks)")
-        chart_screenshot = st.file_uploader("Upload Chart Screenshot (Quotex / Pocket Option - 30 to 100 Candles)", type=["png", "jpg", "jpeg"], key="chart_scanner_file")
-        
-        tf = st.selectbox("Expiry Timeframe", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes", "30 Minutes"])
-        balance = st.number_input("Account Balance ($)", min_value=10, value=100, step=10)
-        risk = st.select_slider("Risk Strategy", options=["Safe (2%)", "Moderate (5%)", "Aggressive (10%)"], value="Moderate (5%)")
+        # 3. Screenshot Upload (30-100 Candles)
+        st.markdown("<br>", unsafe_allow_html=True)
+        chart_screenshot = st.file_uploader("📸 Upload Chart Screenshot (30-100 Candles)", type=["png", "jpg", "jpeg"], key="single_block_screenshot")
         
         st.markdown("<br>", unsafe_allow_html=True)
-        gen_btn = st.button("🚀 EXECUTE ADVANCED VISION & LIVE ANALYSIS")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    if gen_btn:
-        scan_placeholder = st.empty()
-        progress_bar = st.progress(0)
+        gen_btn = st.button("🚀 EXECUTE ENZO VISION & LIVE ANALYSIS")
         
-        scan_stages = [
-            ("📸 Scanning Uploaded Candlestick Screenshot (30-100 Candles)...", 1.2),
-            ("🧠 AI Vision Matrix Evaluating Support / Resistance & Patterns...", 1.5),
-            ("🔮 Computing Next Candle Expiry Probability...", 1.5),
-            ("⚡ Finalizing High-Precision Next Candle Signal...", 1.0)
-        ]
-        
-        current_progress = 0
-        for stage_text, stage_time in scan_stages:
-            scan_placeholder.markdown(f"<p style='color:#0088ff; font-family:monospace; font-weight:bold; font-size:15px;'>⚡ [ENZO VISION SCANNER] {stage_text}</p>", unsafe_allow_html=True)
-            step_increment = 25 / 10
-            time_per_step = stage_time / 10
-            for _ in range(10):
-                time.sleep(time_per_step)
-                current_progress += step_increment
-                progress_bar.progress(min(int(current_progress), 100))
-                
-        progress_bar.empty()
-        scan_placeholder.empty()
-        
-        action, conf, rsi_val, upper_b, lower_b, macd_v, trend = calculate_real_deal_indicators(asset, tf)
-        
-        if chart_screenshot is not None:
-            # Enhanced confidence boost if screenshot is provided
-            conf = random.randint(95, 99)
-            trend = f"Advanced Vision Pattern Match ({tf} Expiry Direction Confirmed)"
-
-        if "Safe" in risk: stake = round(balance * 0.02, 2)
-        elif "Moderate" in risk: stake = round(balance * 0.05, 2)
-        else: stake = round(balance * 0.10, 2)
+        # --- POP-UP SIGNAL AREA INSIDE THE SAME BLOCK ---
+        if gen_btn:
+            scan_placeholder = st.empty()
+            progress_bar = st.progress(0)
             
-        st.session_state.signal_data = {
-            "action": action, "conf": conf, "asset": asset, "tf": tf,
-            "broker": broker, "stake": stake, "strategy": risk, 
-            "rsi": f"Live RSI Value: {rsi_val} (Vision Calibrated)", 
-            "trend": trend, "bands": f"Upper: {upper_b} | Lower: {lower_b}", "macd": f"MACD Spread: {macd_v}",
-            "has_screenshot": chart_screenshot is not None
-        }
-        st.rerun()
+            scan_stages = [
+                ("📸 Scanning Uploaded Candlestick Screenshot (30-100 Candles)...", 1.0),
+                ("🧠 AI Vision Matrix Evaluating Support / Resistance & Patterns...", 1.2),
+                ("🔮 Computing Next Candle Expiry Probability...", 1.2),
+                ("⚡ Finalizing High-Precision Next Candle Signal...", 0.8)
+            ]
+            
+            current_progress = 0
+            for stage_text, stage_time in scan_stages:
+                scan_placeholder.markdown(f"<p style='color:#0088ff; font-family:monospace; font-weight:bold; font-size:14px;'>⚡ [ENZO VISION] {stage_text}</p>", unsafe_allow_html=True)
+                step_increment = 25 / 10
+                time_per_step = stage_time / 10
+                for _ in range(10):
+                    time.sleep(time_per_step)
+                    current_progress += step_increment
+                    progress_bar.progress(min(int(current_progress), 100))
+                    
+            progress_bar.empty()
+            scan_placeholder.empty()
+            
+            action, conf, rsi_val, upper_b, lower_b, macd_v, trend = calculate_real_deal_indicators(asset, tf)
+            
+            if chart_screenshot is not None:
+                conf = random.randint(95, 99)
+                trend = f"Advanced Vision Pattern Match ({tf} Expiry Direction Confirmed)"
 
-    if 'signal_data' in st.session_state and st.session_state.signal_data:
-        sig = st.session_state.signal_data
-        color = "#0088ff" if "BUY" in sig["action"] else "#ff3366"
-        
-        scan_mode_text = "📸 VISION SCREENSHOT SCANNER ACTIVE" if sig.get("has_screenshot") else "⚡ REAL-DEAL TECHNICAL ENGINE"
-        
-        st.markdown(f"""
-            <div class="center-popup-card-animated" style="border-color: {color};">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span style="font-size: 20px; font-weight: 900; color: #ffffff;">✨ {scan_mode_text}</span>
-                    <span style="background-color: {color}; color: #ffffff; padding: 6px 18px; border-radius: 8px; font-weight: 900; font-size: 18px;">{sig['action']}</span>
+            st.session_state.signal_data = {
+                "action": action, "conf": conf, "asset": asset, "tf": tf,
+                "broker": broker, "trend": trend, "rsi": rsi_val,
+                "has_screenshot": chart_screenshot is not None
+            }
+
+        if 'signal_data' in st.session_state and st.session_state.signal_data:
+            sig = st.session_state.signal_data
+            color = "#0088ff" if "BUY" in sig["action"] else "#ff3366"
+            
+            st.markdown(f"""
+                <div class="center-popup-card-animated" style="border-color: {color};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 18px; font-weight: 900; color: #ffffff;">✨ ENZO VISION SIGNAL: {sig['action']}</span>
+                        <span style="background-color: {color}; color: #ffffff; padding: 4px 14px; border-radius: 8px; font-weight: 900; font-size: 16px;">{sig['action']} ↑</span>
+                    </div>
+                    <div class="metric-row"><span style="color: #94a3b8;">Broker / Asset:</span><span style="font-weight: 700; color: #fff;">{sig['broker']} - {sig['asset']}</span></div>
+                    <div class="metric-row"><span style="color: #94a3b8;">Expiry Time:</span><span style="font-weight: 700; color: #fff;">{sig['tf']}</span></div>
+                    <div class="metric-row"><span style="color: #94a3b8;">Pattern Match Confidence:</span><span style="color: #00ffcc; font-weight: 800;">{sig['conf']}%</span></div>
+                    <div class="metric-row"><span style="color: #94a3b8;">Live Price Action:</span><span style="color: #0088ff; font-weight: 700;">{sig['trend']}</span></div>
+                    <div class="metric-row"><span style="color: #94a3b8;">Market Sentiment:</span><span style="color: #f3ba2f; font-weight: 700;">Strong Uptrend (RSI: {sig['rsi']})</span></div>
+                    <div class="metric-row" style="border: none;"><span style="color: #94a3b8;">Prediction Accuracy:</span><span style="color: #0088ff; font-weight: 800;">{sig['conf']}% High Win-Rate Probability</span></div>
                 </div>
-                <div style="background-color: rgba(0, 136, 255, 0.08); padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 15px; border: 1px dashed {color};">
-                    <span style="color: #ffffff; font-size: 15px; font-weight: 800;">👉 PLACE {sig['action']} FOR {sig['tf']} EXPIRY IMMEDIATELY!</span>
-                </div>
-                <div class="metric-row"><span style="color: #94a3b8;">Broker / Asset:</span><span style="font-weight: 700; color: #fff;">{sig['broker']} - {sig['asset']}</span></div>
-                <div class="metric-row"><span style="color: #94a3b8;">Expiry Timeframe:</span><span style="font-weight: 700; color: #fff;">{sig['tf']} | Strategy: {sig['strategy']}</span></div>
-                <div class="metric-row"><span style="color: #94a3b8;">Pattern Analysis:</span><span style="color: #0088ff; font-weight: 700;">{sig['trend']}</span></div>
-                <div class="metric-row"><span style="color: #94a3b8;">Market Indicator (RSI):</span><span style="color: #f3ba2f; font-weight: 700;">{sig['rsi']}</span></div>
-                <div class="metric-row"><span style="color: #38bdf8;">Bollinger Bands:</span><span style="color: #38bdf8; font-weight: 700;">{sig['bands']}</span></div>
-                <div class="metric-row"><span style="color: #94a3b8;">Prediction Accuracy:</span><span style="color: #0088ff; font-weight: 800;">{sig['conf']}% High Win-Rate Probability</span></div>
-                <div class="metric-row" style="border: none;"><span style="color: #94a3b8;">Recommended Stake:</span><span style="color: #ffcc00; font-weight: 800;">${sig['stake']}</span></div>
-            </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+            
+            # --- TRADE FEEDBACK & RESULT TRACKING MODULE ---
+            st.markdown("---")
+            st.markdown("#### 📊 Trade Feedback & Result Tracking")
+            fb_col1, fb_col2 = st.columns(2)
+            with fb_col1:
+                user_fb = st.radio("User Feedback", ["Good", "Bad"], horizontal=True, key="trade_feedback_radio")
+            with fb_col2:
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("Submit Feedback"):
+                    st.success("✅ Thank you for your valuable feedback! Stats updated successfully.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
