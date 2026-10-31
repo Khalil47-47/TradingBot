@@ -109,10 +109,9 @@ with col_asset:
 with col_exp:
     tf = st.selectbox("3. Expiry Time (Timer)", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-# 4. Clean Screenshot Upload (No extra brackets)
+# 4. Screenshot Upload (Arrow and text completely removed, direct uploader)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='color: #0088ff; font-weight: 800; font-size: 14px; text-align: center; margin-bottom: 5px;'>⬆️ UPLOAD CHART SCREENSHOT</p>", unsafe_allow_html=True)
-chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="clean_upload")
+chart_screenshot = st.file_uploader("4. Upload Chart Screenshot", type=["png", "jpg", "jpeg"], key="clean_upload")
 
 st.markdown("<br>", unsafe_allow_html=True)
 gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
