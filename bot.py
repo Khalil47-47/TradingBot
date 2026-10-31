@@ -27,6 +27,7 @@ st.markdown("""
         color: #f1f5f9 !important;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         -webkit-text-size-adjust: 100%;
+        overflow-x: hidden;
     }
     
     @keyframes sapphirePulse {
@@ -36,36 +37,38 @@ st.markdown("""
     }
 
     @keyframes centerPopUpAnimation {
-        0% { opacity: 0; transform: scale(0.9) translateY(15px); }
+        0% { opacity: 0; transform: scale(0.95) translateY(10px); }
         100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
+    /* True Centered Professional Container with No Overlap */
     .main-container { 
-        max-width: 650px;
-        margin: 0 auto;
+        max-width: 600px;
+        margin: 20px auto;
         background: linear-gradient(135deg, rgba(13, 17, 23, 0.98) 0%, rgba(5, 8, 15, 0.98) 100%); 
-        backdrop-filter: blur(12px);
-        padding: 30px; 
-        border-radius: 20px; 
-        border: 1px solid rgba(0, 136, 255, 0.4); 
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9); 
+        backdrop-filter: blur(10px);
+        padding: 25px; 
+        border-radius: 18px; 
+        border: 1px solid rgba(0, 136, 255, 0.35); 
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); 
+        position: relative;
+        z-index: 1;
     }
     
     .welcome-banner {
         background: linear-gradient(135deg, #041e3a 0%, #0d1117 100%);
         border: 1px solid #0088ff;
-        padding: 20px;
-        border-radius: 16px;
+        padding: 18px;
+        border-radius: 14px;
         text-align: center;
-        margin-bottom: 20px;
-        box-shadow: 0 0 25px rgba(0, 136, 255, 0.25);
+        margin-bottom: 15px;
     }
 
     .welcome-title {
         color: #0088ff;
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 900;
-        letter-spacing: 1.2px;
+        letter-spacing: 1px;
         margin: 0;
     }
     
@@ -74,17 +77,28 @@ st.markdown("""
         background-color: #04182f; 
         border: 1px solid #0088ff; 
         color: #0088ff; 
-        padding: 10px; 
-        border-radius: 12px; 
-        font-size: 13px; 
+        padding: 8px; 
+        border-radius: 10px; 
+        font-size: 12px; 
         font-weight: 700; 
-        margin-bottom: 20px; 
+        margin-bottom: 15px; 
+    }
+
+    /* Centered Upload Area Styling */
+    .upload-section {
+        background: rgba(0, 136, 255, 0.05);
+        border: 2px dashed rgba(0, 136, 255, 0.4);
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .stSelectbox label, .stRadio label, .stTextInput label, .stFileUploader label { 
         color: #f1f5f9 !important; 
         font-weight: 700 !important; 
-        font-size: 14px !important; 
+        font-size: 13px !important; 
     }
     
     div[data-baseweb="select"] > div { background-color: #0d1117 !important; color: #ffffff !important; border-color: #334155 !important; }
@@ -93,9 +107,9 @@ st.markdown("""
         width: 100%; 
         background: linear-gradient(135deg, #0088ff 0%, #0055bb 100%) !important; 
         color: #ffffff !important; 
-        font-size: 16px !important; 
+        font-size: 15px !important; 
         font-weight: 900 !important; 
-        padding: 12px !important; 
+        padding: 10px !important; 
         border-radius: 10px !important; 
         border: none !important; 
         cursor: pointer; 
@@ -104,21 +118,21 @@ st.markdown("""
     
     .simple-popup-card { 
         background: linear-gradient(135deg, #08121e 0%, #03070d 100%); 
-        padding: 22px; 
-        border-radius: 14px; 
+        padding: 18px; 
+        border-radius: 12px; 
         border: 2px solid #0088ff; 
-        margin-top: 20px; 
-        margin-bottom: 20px; 
-        box-shadow: 0 0 30px rgba(0, 136, 255, 0.3);
-        animation: centerPopUpAnimation 0.4s ease-out;
+        margin-top: 15px; 
+        margin-bottom: 15px; 
+        box-shadow: 0 0 25px rgba(0, 136, 255, 0.25);
+        animation: centerPopUpAnimation 0.3s ease-out;
     }
     
     .signal-line { 
         display: flex; 
         justify-content: space-between; 
-        padding: 8px 0; 
+        padding: 6px 0; 
         border-bottom: 1px solid #1e293b; 
-        font-size: 14px; 
+        font-size: 13px; 
         color: #f1f5f9; 
     }
     </style>
@@ -127,13 +141,13 @@ st.markdown("""
 if 'active_users' not in st.session_state:
     st.session_state.active_users = random.randint(180, 250)
 
-# --- CENTERED LAYOUT WRAPPER ---
+# --- TRUE CENTERED CONTAINER WRAPPER ---
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 st.markdown("""
     <div class="welcome-banner">
         <h1 class="welcome-title">🦅 ENZO PRO VISION ROBOT</h1>
-        <p style="color: #cbd5e1; font-size: 13px; margin: 4px 0 0 0;">Simple & Professional Screenshot Scanner</p>
+        <p style="color: #cbd5e1; font-size: 12px; margin: 3px 0 0 0;">Centered Professional Screenshot Scanner</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -156,8 +170,7 @@ if broker == "Quotex":
         "EUR/USD (OTC)", "GBP/USD (OTC)", "AUD/CAD (OTC)", "NZD/USD (OTC)", 
         "USD/JPY (OTC)", "USD/CHF (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)", 
         "AUD/JPY (OTC)", "EUR/AUD (OTC)", "USD/CAD (OTC)", "CAD/JPY (OTC)",
-        "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "EUR/NZD (OTC)",
-        "GBP/AUD (OTC)", "AUD/NZD (OTC)", "NZD/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
+        "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
     ]
 else:
     assets = [
@@ -171,20 +184,22 @@ with col_asset:
 with col_exp:
     tf = st.selectbox("Expiry Time", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-# 3. Screenshot Upload (Centered & Clean)
+# 3. Perfectly Centered Screenshot Upload Box
 st.markdown("<br>", unsafe_allow_html=True)
+st.markdown('<div class="upload-section">', unsafe_allow_html=True)
 chart_screenshot = st.file_uploader("📸 Upload Chart Screenshot (30-100 Candles)", type=["png", "jpg", "jpeg"], key="centered_screenshot_uploader")
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS")
 
-# --- SIMPLE & CLEAN POP-UP SIGNAL AREA ---
+# --- CLEAN POP-UP SIGNAL AREA ---
 if gen_btn:
     if chart_screenshot is None:
         st.warning("⚠️ Please upload a chart screenshot first!")
     else:
         with st.spinner("Scanning screenshot & computing signal..."):
-            time.sleep(1.2)
+            time.sleep(1.0)
             
         action = random.choice(["BUY (CALL 🟢)", "SELL (PUT 🔴)"])
         conf = random.randint(94, 99)
@@ -199,9 +214,9 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
     
     st.markdown(f"""
         <div class="simple-popup-card" style="border-color: {color};">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span style="font-size: 16px; font-weight: 900; color: #ffffff;">🎯 SIGNAL RESULT</span>
-                <span style="background-color: {color}; color: #ffffff; padding: 4px 12px; border-radius: 6px; font-weight: 900; font-size: 15px;">{sig['action']}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 15px; font-weight: 900; color: #ffffff;">🎯 SIGNAL RESULT</span>
+                <span style="background-color: {color}; color: #ffffff; padding: 3px 10px; border-radius: 6px; font-weight: 900; font-size: 14px;">{sig['action']}</span>
             </div>
             <div class="signal-line"><span style="color: #94a3b8;">Asset / Broker:</span><span style="font-weight: 700; color: #fff;">{sig['broker']} - {sig['asset']}</span></div>
             <div class="signal-line"><span style="color: #94a3b8;">Expiry Time:</span><span style="font-weight: 700; color: #fff;">{sig['tf']}</span></div>
