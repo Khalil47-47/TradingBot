@@ -40,12 +40,11 @@ st.markdown("""
         margin-bottom: 20px; 
     }
 
-    .control-panel-box {
-        background: linear-gradient(135deg, rgba(13, 17, 23, 0.98) 0%, rgba(5, 8, 15, 0.98) 100%); 
-        padding: 25px; 
-        border-radius: 20px; 
-        border: 1px solid rgba(0, 136, 255, 0.4); 
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85); 
+    .clean-panel {
+        background: #0d1117; 
+        padding: 20px; 
+        border-radius: 16px; 
+        border: 1px solid rgba(0, 136, 255, 0.3); 
     }
 
     .stButton > button { 
@@ -96,10 +95,7 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# Main Container Box Start
-st.markdown('<div class="control-panel-box">', unsafe_allow_html=True)
-
-# --- TOP POP-UP SIGNAL AREA (No extra brackets) ---
+# --- TOP POP-UP SIGNAL AREA ---
 if 'signal_data' in st.session_state and st.session_state.signal_data:
     sig = st.session_state.signal_data
     color = "#0088ff" if "BUY" in sig["action"] else "#ff3366"
@@ -127,7 +123,16 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
             st.success("✅ Feedback saved successfully!")
     st.markdown("---")
 
-st.markdown("### 🏛️ Eagle Eye Vision Control Panel")
+# Clean Panel Wrapper (No extra nested boxes)
+st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
+
+# Short & Clean Header
+st.markdown("""
+    <div style="margin-bottom: 15px;">
+        <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
+        <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select your broker, pair, expiry and upload chart for instant AI signal.</p>
+    </div>
+""", unsafe_allow_html=True)
 
 # 2. Broker Selection
 broker = st.radio("1. Select Broker", ["Quotex", "Pocket Option"], horizontal=True)
