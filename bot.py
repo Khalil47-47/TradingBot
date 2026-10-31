@@ -99,7 +99,7 @@ st.markdown(f"""
 # Main Container Box Start
 st.markdown('<div class="control-panel-box">', unsafe_allow_html=True)
 
-# --- TOP POP-UP SIGNAL AREA (Shows right at the top when generated) ---
+# --- TOP POP-UP SIGNAL AREA (No extra brackets) ---
 if 'signal_data' in st.session_state and st.session_state.signal_data:
     sig = st.session_state.signal_data
     color = "#0088ff" if "BUY" in sig["action"] else "#ff3366"
@@ -107,7 +107,7 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
     st.markdown(f"""
         <div class="top-popup-card" style="border-color: {color};">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 15px; font-weight: 900; color: #ffffff;">🎯 ENZO VISION SIGNAL (POP-UP)</span>
+                <span style="font-size: 15px; font-weight: 900; color: #ffffff;">🎯 ENZO VISION SIGNAL</span>
                 <span style="background-color: {color}; color: #ffffff; padding: 4px 12px; border-radius: 6px; font-weight: 900; font-size: 15px;">{sig['action']}</span>
             </div>
             <div class="signal-line"><span style="color: #94a3b8;">Broker / Asset:</span><span style="font-weight: 700; color: #fff;">{sig['broker']} - {sig['asset']}</span></div>
@@ -116,7 +116,7 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
         </div>
     """, unsafe_allow_html=True)
     
-    # --- TRADE FEEDBACK MODULE RIGHT AT THE TOP WITH SIGNAL ---
+    # --- TRADE FEEDBACK MODULE ---
     st.markdown("#### 📊 Trade Feedback")
     fb_col1, fb_col2 = st.columns(2)
     with fb_col1:
