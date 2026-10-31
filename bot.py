@@ -41,16 +41,15 @@ st.markdown("""
         100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    /* True Centered Professional Container with No Overlap */
     .main-container { 
         max-width: 600px;
         margin: 20px auto;
         background: linear-gradient(135deg, rgba(13, 17, 23, 0.98) 0%, rgba(5, 8, 15, 0.98) 100%); 
         backdrop-filter: blur(10px);
-        padding: 25px; 
-        border-radius: 18px; 
-        border: 1px solid rgba(0, 136, 255, 0.35); 
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); 
+        padding: 30px; 
+        border-radius: 20px; 
+        border: 1px solid rgba(0, 136, 255, 0.4); 
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85); 
         position: relative;
         z-index: 1;
     }
@@ -61,7 +60,7 @@ st.markdown("""
         padding: 18px;
         border-radius: 14px;
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
 
     .welcome-title {
@@ -81,21 +80,22 @@ st.markdown("""
         border-radius: 10px; 
         font-size: 12px; 
         font-weight: 700; 
-        margin-bottom: 15px; 
+        margin-bottom: 20px; 
     }
 
     /* Centered Upload Area Styling */
     .upload-section {
-        background: rgba(0, 136, 255, 0.05);
-        border: 2px dashed rgba(0, 136, 255, 0.4);
-        padding: 15px;
-        border-radius: 12px;
+        background: rgba(0, 136, 255, 0.06);
+        border: 2px dashed rgba(0, 136, 255, 0.5);
+        padding: 20px;
+        border-radius: 16px;
         text-align: center;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        box-shadow: inset 0 0 15px rgba(0, 136, 255, 0.1);
     }
 
-    .stSelectbox label, .stRadio label, .stTextInput label, .stFileUploader label { 
+    .stSelectbox label, .stRadio label, .stFileUploader label { 
         color: #f1f5f9 !important; 
         font-weight: 700 !important; 
         font-size: 13px !important; 
@@ -109,8 +109,8 @@ st.markdown("""
         color: #ffffff !important; 
         font-size: 15px !important; 
         font-weight: 900 !important; 
-        padding: 10px !important; 
-        border-radius: 10px !important; 
+        padding: 12px !important; 
+        border-radius: 12px !important; 
         border: none !important; 
         cursor: pointer; 
         animation: sapphirePulse 3s infinite;
@@ -118,19 +118,19 @@ st.markdown("""
     
     .simple-popup-card { 
         background: linear-gradient(135deg, #08121e 0%, #03070d 100%); 
-        padding: 18px; 
-        border-radius: 12px; 
+        padding: 20px; 
+        border-radius: 14px; 
         border: 2px solid #0088ff; 
-        margin-top: 15px; 
-        margin-bottom: 15px; 
-        box-shadow: 0 0 25px rgba(0, 136, 255, 0.25);
+        margin-top: 20px; 
+        margin-bottom: 20px; 
+        box-shadow: 0 0 30px rgba(0, 136, 255, 0.3);
         animation: centerPopUpAnimation 0.3s ease-out;
     }
     
     .signal-line { 
         display: flex; 
         justify-content: space-between; 
-        padding: 6px 0; 
+        padding: 7px 0; 
         border-bottom: 1px solid #1e293b; 
         font-size: 13px; 
         color: #f1f5f9; 
@@ -141,13 +141,13 @@ st.markdown("""
 if 'active_users' not in st.session_state:
     st.session_state.active_users = random.randint(180, 250)
 
-# --- TRUE CENTERED CONTAINER WRAPPER ---
+# --- SINGLE CENTRALIZED BRACKET CONTAINER ---
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 st.markdown("""
     <div class="welcome-banner">
         <h1 class="welcome-title">🦅 ENZO PRO VISION ROBOT</h1>
-        <p style="color: #cbd5e1; font-size: 12px; margin: 3px 0 0 0;">Centered Professional Screenshot Scanner</p>
+        <p style="color: #cbd5e1; font-size: 12px; margin: 3px 0 0 0;">Unified Control Panel & Screenshot Scanner</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -157,12 +157,12 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("### 🏛️ Eagle Eye Vision Analysis Center")
+st.markdown("### 🏛️ Eagle Eye Vision Control Panel")
 
-# 1. Broker Selection
-broker = st.radio("Broker Selection", ["Quotex", "Pocket Option"], horizontal=True)
+# 1. TOP: Broker Selection
+broker = st.radio("1. Select Broker", ["Quotex", "Pocket Option"], horizontal=True)
 
-# 2. Asset & Expiry in 2 columns
+# 2. BELOW BROKER: Asset (Pair) and Expiry Time (Timer) in 2 columns
 col_asset, col_exp = st.columns(2)
 
 if broker == "Quotex":
@@ -180,20 +180,20 @@ else:
     ]
     
 with col_asset:
-    asset = st.selectbox("Trading Asset", assets)
+    asset = st.selectbox("2. Trading Asset (Pair)", assets)
 with col_exp:
-    tf = st.selectbox("Expiry Time", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
+    tf = st.selectbox("3. Expiry Time (Timer)", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-# 3. Perfectly Centered Screenshot Upload Box
-st.markdown("<br>", unsafe_allow_html=True)
+# 3. CENTERED BELOW: Beautiful Screenshot Upload Section
 st.markdown('<div class="upload-section">', unsafe_allow_html=True)
-chart_screenshot = st.file_uploader("📸 Upload Chart Screenshot (30-100 Candles)", type=["png", "jpg", "jpeg"], key="centered_screenshot_uploader")
+st.markdown("<p style='color: #0088ff; font-weight: 800; margin-bottom: 5px;'>📸 4. Upload Chart Screenshot (30-100 Candles)</p>", unsafe_allow_html=True)
+chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="centered_screenshot_uploader")
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS")
+gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
 
-# --- CLEAN POP-UP SIGNAL AREA ---
+# --- POP-UP SIGNAL AREA INSIDE THE SAME CONTAINER ---
 if gen_btn:
     if chart_screenshot is None:
         st.warning("⚠️ Please upload a chart screenshot first!")
@@ -215,16 +215,16 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
     st.markdown(f"""
         <div class="simple-popup-card" style="border-color: {color};">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 15px; font-weight: 900; color: #ffffff;">🎯 SIGNAL RESULT</span>
-                <span style="background-color: {color}; color: #ffffff; padding: 3px 10px; border-radius: 6px; font-weight: 900; font-size: 14px;">{sig['action']}</span>
+                <span style="font-size: 15px; font-weight: 900; color: #ffffff;">🎯 ENZO VISION SIGNAL</span>
+                <span style="background-color: {color}; color: #ffffff; padding: 4px 12px; border-radius: 6px; font-weight: 900; font-size: 15px;">{sig['action']}</span>
             </div>
-            <div class="signal-line"><span style="color: #94a3b8;">Asset / Broker:</span><span style="font-weight: 700; color: #fff;">{sig['broker']} - {sig['asset']}</span></div>
+            <div class="signal-line"><span style="color: #94a3b8;">Broker / Asset:</span><span style="font-weight: 700; color: #fff;">{sig['broker']} - {sig['asset']}</span></div>
             <div class="signal-line"><span style="color: #94a3b8;">Expiry Time:</span><span style="font-weight: 700; color: #fff;">{sig['tf']}</span></div>
-            <div class="signal-line" style="border: none;"><span style="color: #94a3b8;">Accuracy / Confidence:</span><span style="color: #00ffcc; font-weight: 800;">{sig['conf']}% High Win-Rate</span></div>
+            <div class="signal-line" style="border: none;"><span style="color: #94a3b8;">Confidence Level:</span><span style="color: #00ffcc; font-weight: 800;">{sig['conf']}% High Win-Rate</span></div>
         </div>
     """, unsafe_allow_html=True)
     
-    # --- SIMPLE FEEDBACK MODULE ---
+    # --- TRADE FEEDBACK MODULE ---
     st.markdown("---")
     st.markdown("#### 📊 Trade Feedback")
     fb_col1, fb_col2 = st.columns(2)
