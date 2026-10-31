@@ -23,75 +23,23 @@ st.markdown("""
     [data-testid="stHeader"] {display: none !important;}
     
     html, body, [data-testid="stAppViewContainer"], .stApp {
-        background: radial-gradient(circle at 50% 20%, #081827 0%, #030508 70%), #030508 !important;
+        background: #030508 !important;
         color: #f1f5f9 !important;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        -webkit-text-size-adjust: 100%;
-        overflow-x: hidden;
-    }
-    
-    @keyframes sapphirePulse {
-        0% { box-shadow: 0 0 10px rgba(0, 136, 255, 0.2); }
-        50% { box-shadow: 0 0 25px rgba(0, 136, 255, 0.6); }
-        100% { box-shadow: 0 0 10px rgba(0, 136, 255, 0.2); }
     }
 
-    @keyframes centerPopUpAnimation {
-        0% { opacity: 0; transform: scale(0.95) translateY(10px); }
-        100% { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .main-container { 
-        max-width: 600px;
-        margin: 20px auto;
-        background: transparent; 
-        padding: 10px; 
-        position: relative;
-        z-index: 1;
-    }
-    
     .active-users-badge { 
         text-align: center; 
         background-color: #04182f; 
         border: 1px solid #0088ff; 
         color: #0088ff; 
-        padding: 12px; 
-        border-radius: 12px; 
-        font-size: 14px; 
+        padding: 10px; 
+        border-radius: 10px; 
+        font-size: 13px; 
         font-weight: 700; 
         margin-bottom: 20px; 
-        box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);
     }
 
-    .control-panel-box {
-        background: linear-gradient(135deg, rgba(13, 17, 23, 0.98) 0%, rgba(5, 8, 15, 0.98) 100%); 
-        backdrop-filter: blur(10px);
-        padding: 25px; 
-        border-radius: 20px; 
-        border: 1px solid rgba(0, 136, 255, 0.4); 
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85); 
-    }
-
-    /* Sketch style centered upload box with arrow */
-    .upload-box-sketch {
-        background: linear-gradient(135deg, rgba(16, 24, 38, 0.95) 0%, rgba(8, 13, 22, 0.95) 100%);
-        border: 2px dashed #0088ff;
-        padding: 25px 20px;
-        border-radius: 16px;
-        text-align: center;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        box-shadow: 0 0 25px rgba(0, 136, 255, 0.2);
-    }
-
-    .stSelectbox label, .stRadio label, .stFileUploader label { 
-        color: #f1f5f9 !important; 
-        font-weight: 700 !important; 
-        font-size: 13px !important; 
-    }
-    
-    div[data-baseweb="select"] > div { background-color: #0d1117 !important; color: #ffffff !important; border-color: #334155 !important; }
-    
     .stButton > button { 
         width: 100%; 
         background: linear-gradient(135deg, #0088ff 0%, #0055bb 100%) !important; 
@@ -99,21 +47,18 @@ st.markdown("""
         font-size: 15px !important; 
         font-weight: 900 !important; 
         padding: 12px !important; 
-        border-radius: 12px !important; 
+        border-radius: 10px !important; 
         border: none !important; 
         cursor: pointer; 
-        animation: sapphirePulse 3s infinite;
     }
     
     .simple-popup-card { 
-        background: linear-gradient(135deg, #08121e 0%, #03070d 100%); 
+        background: #08121e; 
         padding: 20px; 
-        border-radius: 14px; 
+        border-radius: 12px; 
         border: 2px solid #0088ff; 
         margin-top: 20px; 
         margin-bottom: 20px; 
-        box-shadow: 0 0 30px rgba(0, 136, 255, 0.3);
-        animation: centerPopUpAnimation 0.3s ease-out;
     }
     
     .signal-line { 
@@ -130,22 +75,19 @@ st.markdown("""
 if 'active_users' not in st.session_state:
     st.session_state.active_users = random.randint(180, 250)
 
-st.markdown('<div class="main-container">', unsafe_allow_html=True)
-
+# 1. Active Users Status
 st.markdown(f"""
     <div class="active-users-badge">
         🟢 Live Status: {st.session_state.active_users} Traders Active Right Now!
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="control-panel-box">', unsafe_allow_html=True)
-
 st.markdown("### 🏛️ Eagle Eye Vision Control Panel")
 
-# 1. Top Broker Selection (Quotex & Pocket Option side by side)
+# 2. Broker Selection
 broker = st.radio("1. Select Broker", ["Quotex", "Pocket Option"], horizontal=True)
 
-# 2. Below Broker: Trading Asset (Pair) and Expiry Time (Timer) in 2 columns
+# 3. Asset and Expiry Time
 col_asset, col_exp = st.columns(2)
 
 if broker == "Quotex":
@@ -159,7 +101,7 @@ else:
     assets = [
         "EUR/USD [OTC]", "GBP/USD [OTC]", "USD/JPY [OTC]", "AUD/CHF [OTC]", 
         "EUR/GBP [OTC]", "USD/CAD [OTC]", "GBP/JPY [OTC]", "NZD/JPY [OTC]",
-        "GOLD [OTC]", "SILVER [OTC]"
+        "GOLD (OTC)", "SILVER (OTC)"
     ]
     
 with col_asset:
@@ -167,13 +109,10 @@ with col_asset:
 with col_exp:
     tf = st.selectbox("3. Expiry Time (Timer)", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-# 3. Center Upload Box with Upward Arrow matching your drawing
+# 4. Clean Screenshot Upload (No extra brackets)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown('<div class="upload-box-sketch">', unsafe_allow_html=True)
-st.markdown("<div style='font-size: 26px; color: #0088ff; margin-bottom: 2px;'>⬆️</div>", unsafe_allow_html=True)
-st.markdown("<p style='color: #0088ff; font-weight: 800; font-size: 14px; margin-bottom: 8px;'>UPLOAD CHART SCREENSHOT</p>", unsafe_allow_html=True)
-chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="sketch_upload_box")
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("<p style='color: #0088ff; font-weight: 800; font-size: 14px; text-align: center; margin-bottom: 5px;'>⬆️ UPLOAD CHART SCREENSHOT</p>", unsafe_allow_html=True)
+chart_screenshot = st.file_uploader("", type=["png", "jpg", "jpeg"], key="clean_upload")
 
 st.markdown("<br>", unsafe_allow_html=True)
 gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
@@ -214,11 +153,8 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
     st.markdown("#### 📊 Trade Feedback")
     fb_col1, fb_col2 = st.columns(2)
     with fb_col1:
-        user_fb = st.radio("Result", ["Win (Good)", "Loss (Bad)"], horizontal=True, key="simple_feedback_radio")
+        user_fb = st.radio("Result", ["Win (Good)", "Loss (Bad)"], horizontal=True, key="clean_feedback")
     with fb_col2:
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("Submit Result"):
             st.success("✅ Feedback saved successfully!")
-
-st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
