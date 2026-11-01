@@ -12,7 +12,7 @@ import pandas as pd
 st.set_page_config(
     page_title="ENZO PRO ROBOT - Elite Trading Terminal",
     page_icon="⚡",
-    layout="wide"  # Wide layout for embedding live chart side-by-side or clean view
+    layout="wide"
 )
 
 # --- ROBUST JSON MEMORY & LEARNING STORAGE SETUP ---
@@ -67,11 +67,23 @@ def analyze_market_and_chart(asset_name, image_bytes):
         pixel_variance = stat.var[0]
         
         ticker_map = {
-            "EUR/USD (OTC)": "EURUSD=X", "EUR/USD [OTC]": "EURUSD=X",
-            "GBP/USD (OTC)": "GBPUSD=X", "GBP/USD [OTC]": "GBPUSD=X",
-            "USD/JPY (OTC)": "USDJPY=X", "USD/JPY [OTC]": "USDJPY=X",
-            "GOLD (OTC)": "GC=F", "GOLD [OTC]": "GC=F",
-            "SILVER (OTC)": "SI=F", "SILVER [OTC]": "SI=F"
+            "EUR/USD (OTC)": "EURUSD=X",
+            "GBP/USD (OTC)": "GBPUSD=X",
+            "AUD/CAD (OTC)": "AUDCAD=X",
+            "NZD/USD (OTC)": "NZDUSD=X",
+            "USD/JPY (OTC)": "USDJPY=X",
+            "USD/CHF (OTC)": "USDCHF=X",
+            "EUR/JPY (OTC)": "EURJPY=X",
+            "GBP/JPY (OTC)": "GBPJPY=X",
+            "AUD/JPY (OTC)": "AUDJPY=X",
+            "EUR/AUD (OTC)": "EURAUD=X",
+            "USD/CAD (OTC)": "USDCAD=X",
+            "CAD/JPY (OTC)": "CADJPY=X",
+            "EUR/GBP (OTC)": "EURGBP=X",
+            "AUD/USD (OTC)": "AUDUSD=X",
+            "CHF/JPY (OTC)": "CHFJPY=X",
+            "GOLD (OTC)": "GC=F",
+            "SILVER (OTC)": "SI=F"
         }
         symbol = ticker_map.get(asset_name, "EURUSD=X")
         
@@ -102,6 +114,7 @@ def analyze_market_and_chart(asset_name, image_bytes):
     except Exception:
         return "BUY (CALL 🟢)", 95
 
+# --- STRICT PURE BLACK & DARK MODE CSS ---
 st.markdown("""
     <style>
     :root {
@@ -114,9 +127,14 @@ st.markdown("""
     [data-testid="stHeader"] {display: none !important;}
     
     html, body, [data-testid="stAppViewContainer"], .stApp {
-        background: #030508 !important;
+        background-color: #000000 !important;
+        background: #000000 !important;
         color: #f1f5f9 !important;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    [data-testid="stSidebar"] {
+        background-color: #030508 !important;
     }
 
     .active-users-badge { 
@@ -132,7 +150,7 @@ st.markdown("""
     }
 
     .clean-panel {
-        background: #0d1117; 
+        background: #0b0f17; 
         padding: 20px; 
         border-radius: 16px; 
         border: 1px solid rgba(0, 136, 255, 0.3); 
@@ -156,7 +174,7 @@ st.markdown("""
     }
 
     .top-popup-card { 
-        background: #08121e; 
+        background: #060b13; 
         padding: 20px; 
         border-radius: 12px; 
         border: 2px solid #0088ff; 
@@ -243,18 +261,8 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
             st.success("✅ Feedback successfully recorded. Bot brain updated!")
     st.markdown("---")
 
-# --- LAYOUT SPLIT: LEFT FOR LIVE TRADINGVIEW CHART, RIGHT FOR CONTROLS & SCANNER ---
-col_chart, col_control = st.columns([1.3, 1])
-
-with col_chart:
-    st.markdown("""
-        <div style="background: #0d1117; padding: 15px; border-radius: 16px; border: 1px solid rgba(0, 136, 255, 0.3); height: 520px;">
-            <h4 style="color: #0088ff; margin: 0 0 10px 0; font-size: 15px; font-weight: 900;">📈 Live Real-Time Market Terminal</h4>
-            <div class="tradingview-widget-container" style="height:460px;width:100%;">
-                <iframe scrolling="no" allowtransparency="true" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" style="box-sizing: border-box; height: 100%; width: 100%; border-radius: 10px;" src="https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22width%22%3A%22100%25%22%2C%22height%22%3A%22460%22%2C%22symbol%22%3A%22FX_IDC%3AEURUSD%22%2C%22interval%22%3A%221%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22locale%22%3A%22en%22%2C%22enable_publishing%22%3Afalse%22%2C%22hide_top_toolbar%22%3Afalse%22%2C%22save_image%22%3Afalse%22%2C%22calendar%22%3Afalse%22%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%7D"></iframe>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
+# --- LAYOUT SPLIT: CONTROLS & DYNAMIC QUOTEX LIVE CHART ---
+col_control, col_chart = st.columns([1, 1.3])
 
 with col_control:
     st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
@@ -262,38 +270,24 @@ with col_control:
     st.markdown("""
         <div style="margin-bottom: 15px;">
             <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
-            <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select pair & upload chart for instant signal.</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select quotex asset & upload chart for instant signal.</p>
         </div>
     """, unsafe_allow_html=True)
 
-    # 2. Broker Selection
-    broker = st.radio("1. Select Broker", ["Quotex", "Pocket Option"], horizontal=True)
+    # Quotex Asset List Only
+    assets = [
+        "EUR/USD (OTC)", "GBP/USD (OTC)", "AUD/CAD (OTC)", "NZD/USD (OTC)", 
+        "USD/JPY (OTC)", "USD/CHF (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)", 
+        "AUD/JPY (OTC)", "EUR/AUD (OTC)", "USD/CAD (OTC)", "CAD/JPY (OTC)",
+        "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
+    ]
 
-    # 3. Asset and Expiry Time
-    col_asset, col_exp = st.columns(2)
+    asset = st.selectbox("1. Quotex Trading Asset", assets)
+    tf = st.selectbox("2. Expiry Time", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-    if broker == "Quotex":
-        assets = [
-            "EUR/USD (OTC)", "GBP/USD (OTC)", "AUD/CAD (OTC)", "NZD/USD (OTC)", 
-            "USD/JPY (OTC)", "USD/CHF (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)", 
-            "AUD/JPY (OTC)", "EUR/AUD (OTC)", "USD/CAD (OTC)", "CAD/JPY (OTC)",
-            "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
-        ]
-    else:
-        assets = [
-            "EUR/USD [OTC]", "GBP/USD [OTC]", "USD/JPY [OTC]", "AUD/CHF [OTC]", 
-            "EUR/GBP [OTC]", "USD/CAD [OTC]", "GBP/JPY [OTC]", "NZD/JPY [OTC]",
-            "GOLD [OTC]", "SILVER [OTC]"
-        ]
-        
-    with col_asset:
-        asset = st.selectbox("2. Asset", assets)
-    with col_exp:
-        tf = st.selectbox("3. Expiry", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
-
-    # 4. Screenshot Upload
+    # Screenshot Upload
     st.markdown("<br>", unsafe_allow_html=True)
-    chart_screenshot = st.file_uploader("4. Upload Chart Screenshot", type=["png", "jpg", "jpeg"], key="clean_upload")
+    chart_screenshot = st.file_uploader("3. Upload Chart Screenshot", type=["png", "jpg", "jpeg"], key="clean_upload")
 
     st.markdown("<br>", unsafe_allow_html=True)
     gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
@@ -335,7 +329,7 @@ with col_control:
                         note = "Pattern matched: Verified high-accuracy chart configuration."
 
                 st.session_state.signal_data = {
-                    "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": broker, "img_hash": img_hash, "note": note
+                    "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": "Quotex", "img_hash": img_hash, "note": note
                 }
                 
                 st.markdown("""
@@ -347,3 +341,35 @@ with col_control:
                 st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
+
+with col_chart:
+    # Exact Quotex to TradingView Global Symbol Mapper
+    tv_symbol_map = {
+        "EUR/USD (OTC)": "FX_IDC:EURUSD",
+        "GBP/USD (OTC)": "FX_IDC:GBPUSD",
+        "AUD/CAD (OTC)": "FX_IDC:AUDCAD",
+        "NZD/USD (OTC)": "FX_IDC:NZDUSD",
+        "USD/JPY (OTC)": "FX_IDC:USDJPY",
+        "USD/CHF (OTC)": "FX_IDC:USDCHF",
+        "EUR/JPY (OTC)": "FX_IDC:EURJPY",
+        "GBP/JPY (OTC)": "FX_IDC:GBPJPY",
+        "AUD/JPY (OTC)": "FX_IDC:AUDJPY",
+        "EUR/AUD (OTC)": "FX_IDC:EURAUD",
+        "USD/CAD (OTC)": "FX_IDC:USDCAD",
+        "CAD/JPY (OTC)": "FX_IDC:CADJPY",
+        "EUR/GBP (OTC)": "FX_IDC:EURGBP",
+        "AUD/USD (OTC)": "FX_IDC:AUDUSD",
+        "CHF/JPY (OTC)": "FX_IDC:CHFJPY",
+        "GOLD (OTC)": "OANDA:XAUUSD",
+        "SILVER (OTC)": "OANDA:XAGUSD"
+    }
+    current_tv_symbol = tv_symbol_map.get(asset, "FX_IDC:EURUSD")
+
+    st.markdown(f"""
+        <div style="background: #0b0f17; padding: 15px; border-radius: 16px; border: 1px solid rgba(0, 136, 255, 0.3); height: 575px;">
+            <h4 style="color: #0088ff; margin: 0 0 10px 0; font-size: 15px; font-weight: 900;">📈 Quotex Live Terminal: {asset}</h4>
+            <div style="height:515px;width:100%;">
+                <iframe scrolling="no" allowtransparency="true" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" style="box-sizing: border-box; height: 100%; width: 100%; border-radius: 10px;" src="https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22width%22%3A%22100%25%22%2C%22height%22%3A%22515%22%2C%22symbol%22%3A%22{current_tv_symbol}%22%2C%22interval%22%3A%221%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22locale%22%3A%22en%22%2C%22enable_publishing%22%3Afalse%22%2C%22hide_top_toolbar%22%3Afalse%22%2C%22save_image%22%3Afalse%22%2C%22calendar%22%3Afalse%22%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%7D"></iframe>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
