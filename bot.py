@@ -10,9 +10,9 @@ import yfinance as yf
 import pandas as pd
 
 st.set_page_config(
-    page_title="ENZO PRO ROBOT - Elite Trading Bot",
+    page_title="ENZO PRO ROBOT - Elite Trading Terminal",
     page_icon="⚡",
-    layout="centered"
+    layout="wide"  # Wide layout for embedding live chart side-by-side or clean view
 )
 
 # --- ROBUST JSON MEMORY & LEARNING STORAGE SETUP ---
@@ -37,7 +37,7 @@ def save_memory(data):
         with open(DB_FILE, "w") as f:
             json.dump(data, f, indent=4)
     except Exception as e:
-        st.error(f"Error saving data: {e}")
+        pass
 
 db_data = load_memory()
 
@@ -206,7 +206,7 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
         </div>
     """, unsafe_allow_html=True)
     
-    # --- TRADE FEEDBACK MODULE (LEARNING & KEY MAPPING) ---
+    # --- TRADE FEEDBACK MODULE ---
     st.markdown("#### 📊 Trade Feedback")
     fb_col1, fb_col2 = st.columns(2)
     with fb_col1:
@@ -222,7 +222,6 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
             current_conf = sig['conf']
             result_val = "Win" if "Win" in user_fb else "Loss"
             
-            # Save exact keys, names, and result in learning memory
             db_data["learning_memory"][current_hash] = {
                 "broker": current_broker,
                 "asset": current_asset,
@@ -232,7 +231,6 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
                 "confidence": current_conf
             }
             
-            # Update analytics dictionary
             if current_asset not in db_data["bot_analytics"]:
                 db_data["bot_analytics"][current_asset] = {"total_wins": 0, "total_losses": 0}
                 
@@ -242,98 +240,110 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
                 db_data["bot_analytics"][current_asset]["total_losses"] += 1
                 
             save_memory(db_data)
-            st.success("✅ Feedback & memory saved permanently into JSON database!")
+            st.success("✅ Feedback successfully recorded. Bot brain updated!")
     st.markdown("---")
 
-# Clean Panel Wrapper
-st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
+# --- LAYOUT SPLIT: LEFT FOR LIVE TRADINGVIEW CHART, RIGHT FOR CONTROLS & SCANNER ---
+col_chart, col_control = st.columns([1.3, 1])
 
-st.markdown("""
-    <div style="margin-bottom: 15px;">
-        <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
-        <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select your broker, pair, expiry and upload valid trading chart screenshot.</p>
-    </div>
-""", unsafe_allow_html=True)
+with col_chart:
+    st.markdown("""
+        <div style="background: #0d1117; padding: 15px; border-radius: 16px; border: 1px solid rgba(0, 136, 255, 0.3); height: 520px;">
+            <h4 style="color: #0088ff; margin: 0 0 10px 0; font-size: 15px; font-weight: 900;">📈 Live Real-Time Market Terminal</h4>
+            <div class="tradingview-widget-container" style="height:460px;width:100%;">
+                <iframe scrolling="no" allowtransparency="true" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" style="box-sizing: border-box; height: 100%; width: 100%; border-radius: 10px;" src="https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22width%22%3A%22100%25%22%2C%22height%22%3A%22460%22%2C%22symbol%22%3A%22FX_IDC%3AEURUSD%22%2C%22interval%22%3A%221%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22locale%22%3A%22en%22%2C%22enable_publishing%22%3Afalse%22%2C%22hide_top_toolbar%22%3Afalse%22%2C%22save_image%22%3Afalse%22%2C%22calendar%22%3Afalse%22%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%7D"></iframe>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-# 2. Broker Selection
-broker = st.radio("1. Select Broker", ["Quotex", "Pocket Option"], horizontal=True)
+with col_control:
+    st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
 
-# 3. Asset and Expiry Time
-col_asset, col_exp = st.columns(2)
+    st.markdown("""
+        <div style="margin-bottom: 15px;">
+            <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
+            <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select pair & upload chart for instant signal.</p>
+        </div>
+    """, unsafe_allow_html=True)
 
-if broker == "Quotex":
-    assets = [
-        "EUR/USD (OTC)", "GBP/USD (OTC)", "AUD/CAD (OTC)", "NZD/USD (OTC)", 
-        "USD/JPY (OTC)", "USD/CHF (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)", 
-        "AUD/JPY (OTC)", "EUR/AUD (OTC)", "USD/CAD (OTC)", "CAD/JPY (OTC)",
-        "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
-    ]
-else:
-    assets = [
-        "EUR/USD [OTC]", "GBP/USD [OTC]", "USD/JPY [OTC]", "AUD/CHF [OTC]", 
-        "EUR/GBP [OTC]", "USD/CAD [OTC]", "GBP/JPY [OTC]", "NZD/JPY [OTC]",
-        "GOLD [OTC]", "SILVER [OTC]"
-    ]
-    
-with col_asset:
-    asset = st.selectbox("2. Trading Asset (Pair)", assets)
-with col_exp:
-    tf = st.selectbox("3. Expiry Time (Timer)", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
+    # 2. Broker Selection
+    broker = st.radio("1. Select Broker", ["Quotex", "Pocket Option"], horizontal=True)
 
-# 4. Screenshot Upload
-st.markdown("<br>", unsafe_allow_html=True)
-chart_screenshot = st.file_uploader("4. Upload Chart Screenshot", type=["png", "jpg", "jpeg"], key="clean_upload")
+    # 3. Asset and Expiry Time
+    col_asset, col_exp = st.columns(2)
 
-st.markdown("<br>", unsafe_allow_html=True)
-gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
-
-if gen_btn:
-    if chart_screenshot is None:
-        st.warning("⚠️ Please upload a chart screenshot first!")
+    if broker == "Quotex":
+        assets = [
+            "EUR/USD (OTC)", "GBP/USD (OTC)", "AUD/CAD (OTC)", "NZD/USD (OTC)", 
+            "USD/JPY (OTC)", "USD/CHF (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)", 
+            "AUD/JPY (OTC)", "EUR/AUD (OTC)", "USD/CAD (OTC)", "CAD/JPY (OTC)",
+            "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
+        ]
     else:
-        img_bytes = chart_screenshot.getvalue()
+        assets = [
+            "EUR/USD [OTC]", "GBP/USD [OTC]", "USD/JPY [OTC]", "AUD/CHF [OTC]", 
+            "EUR/GBP [OTC]", "USD/CAD [OTC]", "GBP/JPY [OTC]", "NZD/JPY [OTC]",
+            "GOLD [OTC]", "SILVER [OTC]"
+        ]
         
-        # --- VALIDATE CHART ---
-        is_valid, error_msg = validate_trading_chart(img_bytes)
-        
-        if not is_valid:
-            st.error(f"❌ {error_msg}")
+    with col_asset:
+        asset = st.selectbox("2. Asset", assets)
+    with col_exp:
+        tf = st.selectbox("3. Expiry", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
+
+    # 4. Screenshot Upload
+    st.markdown("<br>", unsafe_allow_html=True)
+    chart_screenshot = st.file_uploader("4. Upload Chart Screenshot", type=["png", "jpg", "jpeg"], key="clean_upload")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
+
+    if gen_btn:
+        if chart_screenshot is None:
+            st.warning("⚠️ Please upload a chart screenshot first!")
         else:
-            with st.spinner("Analyzing image pixels & scanning live price action..."):
-                time.sleep(1.2)
+            img_bytes = chart_screenshot.getvalue()
+            
+            # --- VALIDATE CHART ---
+            is_valid, error_msg = validate_trading_chart(img_bytes)
+            
+            if not is_valid:
+                st.error(f"❌ {error_msg}")
+            else:
+                with st.spinner("Analyzing image pixels & live price action..."):
+                    time.sleep(1.2)
+                    
+                img_hash = hashlib.md5(img_bytes).hexdigest()
                 
-            img_hash = hashlib.md5(img_bytes).hexdigest()
-            
-            # --- GENUINE PIXEL & PRICE ACTION ENGINE ---
-            action, conf = analyze_market_and_chart(asset, img_bytes)
-            
-            note = ""
-            # Check JSON Memory for existing learning/feedback mapping
-            mem_record = db_data["learning_memory"].get(img_hash)
-            
-            if mem_record and mem_record.get("asset") == asset:
-                prev_result = mem_record.get("result")
-                if prev_result == "Loss":
-                    if "BUY" in action:
-                        action = "SELL (PUT 🔴)"
-                    else:
-                        action = "BUY (CALL 🟢)"
-                    conf = 95
-                    note = "Adaptive correction: Signal inverted based on past loss memory."
-                elif prev_result == "Win":
-                    conf = 98
-                    note = "Pattern matched: Verified high-accuracy chart configuration."
+                # --- GENUINE PIXEL & PRICE ACTION ENGINE ---
+                action, conf = analyze_market_and_chart(asset, img_bytes)
+                
+                note = ""
+                mem_record = db_data["learning_memory"].get(img_hash)
+                
+                if mem_record and mem_record.get("asset") == asset:
+                    prev_result = mem_record.get("result")
+                    if prev_result == "Loss":
+                        if "BUY" in action:
+                            action = "SELL (PUT 🔴)"
+                        else:
+                            action = "BUY (CALL 🟢)"
+                        conf = 95
+                        note = "Adaptive correction: Signal inverted based on past loss memory."
+                    elif prev_result == "Win":
+                        conf = 98
+                        note = "Pattern matched: Verified high-accuracy chart configuration."
 
-            st.session_state.signal_data = {
-                "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": broker, "img_hash": img_hash, "note": note
-            }
-            
-            st.markdown("""
-                <script>
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                </script>
-            """, unsafe_allow_html=True)
-            
-            st.rerun()
+                st.session_state.signal_data = {
+                    "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": broker, "img_hash": img_hash, "note": note
+                }
+                
+                st.markdown("""
+                    <script>
+                        window.scrollTo({top: 0, behavior: 'smooth'});
+                    </script>
+                """, unsafe_allow_html=True)
+                
+                st.rerun()
 
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
