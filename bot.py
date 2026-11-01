@@ -10,9 +10,9 @@ import yfinance as yf
 import pandas as pd
 
 st.set_page_config(
-    page_title="ENZO PRO ROBOT - Elite Trading Terminal",
+    page_title="ENZO PRO ROBOT - Elite Trading Bot",
     page_icon="⚡",
-    layout="wide"
+    layout="centered"
 )
 
 # --- ROBUST JSON MEMORY & LEARNING STORAGE SETUP ---
@@ -133,10 +133,6 @@ st.markdown("""
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    [data-testid="stSidebar"] {
-        background-color: #030508 !important;
-    }
-
     .active-users-badge { 
         text-align: center; 
         background-color: #04182f; 
@@ -146,12 +142,22 @@ st.markdown("""
         border-radius: 10px; 
         font-size: 13px; 
         font-weight: 700; 
-        margin-bottom: 20px; 
+        margin-bottom: 15px; 
+    }
+
+    .telegram-banner {
+        background: linear-gradient(135deg, #0088ff 0%, #0044aa 100%);
+        padding: 12px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 20px;
+        border: 1px solid #00ffcc;
+        box-shadow: 0 0 15px rgba(0, 136, 255, 0.4);
     }
 
     .clean-panel {
         background: #0b0f17; 
-        padding: 20px; 
+        padding: 25px; 
         border-radius: 16px; 
         border: 1px solid rgba(0, 136, 255, 0.3); 
     }
@@ -201,6 +207,14 @@ if 'active_users' not in st.session_state:
 st.markdown(f"""
     <div class="active-users-badge">
         🟢 Live Status: {st.session_state.active_users} Traders Active Right Now!
+    </div>
+""", unsafe_allow_html=True)
+
+# 2. Official Telegram Channel Banner/Button
+st.markdown("""
+    <div class="telegram-banner">
+        <span style="color: #ffffff; font-size: 14px; font-weight: 800;">📢 Join Official Enzo VIP Telegram Channel</span><br>
+        <a href="https://t.me/your_telegram_channel_link" target="_blank" style="color: #00ffcc; font-size: 13px; font-weight: 700; text-decoration: underline;">Click Here to Connect With Us & Get Daily Updates!</a>
     </div>
 """, unsafe_allow_html=True)
 
@@ -261,115 +275,83 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
             st.success("✅ Feedback successfully recorded. Bot brain updated!")
     st.markdown("---")
 
-# --- LAYOUT SPLIT: CONTROLS & DYNAMIC QUOTEX LIVE CHART ---
-col_control, col_chart = st.columns([1, 1.3])
+# Clean Panel Wrapper
+st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
 
-with col_control:
-    st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
+st.markdown("""
+    <div style="margin-bottom: 15px;">
+        <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
+        <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select your quotex asset, expiry and upload chart for instant signal.</p>
+    </div>
+""", unsafe_allow_html=True)
 
-    st.markdown("""
-        <div style="margin-bottom: 15px;">
-            <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
-            <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select quotex asset & upload chart for instant signal.</p>
-        </div>
-    """, unsafe_allow_html=True)
+# Quotex Asset List
+assets = [
+    "EUR/USD (OTC)", "GBP/USD (OTC)", "AUD/CAD (OTC)", "NZD/USD (OTC)", 
+    "USD/JPY (OTC)", "USD/CHF (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)", 
+    "AUD/JPY (OTC)", "EUR/AUD (OTC)", "USD/CAD (OTC)", "CAD/JPY (OTC)",
+    "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
+]
 
-    # Quotex Asset List Only
-    assets = [
-        "EUR/USD (OTC)", "GBP/USD (OTC)", "AUD/CAD (OTC)", "NZD/USD (OTC)", 
-        "USD/JPY (OTC)", "USD/CHF (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)", 
-        "AUD/JPY (OTC)", "EUR/AUD (OTC)", "USD/CAD (OTC)", "CAD/JPY (OTC)",
-        "EUR/GBP (OTC)", "AUD/USD (OTC)", "CHF/JPY (OTC)", "GOLD (OTC)", "SILVER (OTC)"
-    ]
-
-    asset = st.selectbox("1. Quotex Trading Asset", assets)
+col_asset, col_exp = st.columns(2)
+with col_asset:
+    asset = st.selectbox("1. Trading Asset", assets)
+with col_exp:
     tf = st.selectbox("2. Expiry Time", ["1 Minute", "2 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"])
 
-    # Screenshot Upload
-    st.markdown("<br>", unsafe_allow_html=True)
-    chart_screenshot = st.file_uploader("3. Upload Chart Screenshot", type=["png", "jpg", "jpeg"], key="clean_upload")
+# Screenshot Upload
+st.markdown("<br>", unsafe_allow_html=True)
+chart_screenshot = st.file_uploader("3. Upload Chart Screenshot", type=["png", "jpg", "jpeg"], key="clean_upload")
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
+st.markdown("<br>", unsafe_allow_html=True)
+gen_btn = st.button("🚀 EXECUTE VISION ANALYSIS & GENERATE SIGNAL")
 
-    if gen_btn:
-        if chart_screenshot is None:
-            st.warning("⚠️ Please upload a chart screenshot first!")
+if gen_btn:
+    if chart_screenshot is None:
+        st.warning("⚠️ Please upload a chart screenshot first!")
+    else:
+        img_bytes = chart_screenshot.getvalue()
+        
+        # --- VALIDATE CHART ---
+        is_valid, error_msg = validate_trading_chart(img_bytes)
+        
+        if not is_valid:
+            st.error(f"❌ {error_msg}")
         else:
-            img_bytes = chart_screenshot.getvalue()
+            with st.spinner("Analyzing image pixels & live price action..."):
+                time.sleep(1.2)
+                
+            img_hash = hashlib.md5(img_bytes).hexdigest()
             
-            # --- VALIDATE CHART ---
-            is_valid, error_msg = validate_trading_chart(img_bytes)
+            # --- GENUINE PIXEL & PRICE ACTION ENGINE ---
+            action, conf = analyze_market_and_chart(asset, img_bytes)
             
-            if not is_valid:
-                st.error(f"❌ {error_msg}")
-            else:
-                with st.spinner("Analyzing image pixels & live price action..."):
-                    time.sleep(1.2)
-                    
-                img_hash = hashlib.md5(img_bytes).hexdigest()
-                
-                # --- GENUINE PIXEL & PRICE ACTION ENGINE ---
-                action, conf = analyze_market_and_chart(asset, img_bytes)
-                
-                note = ""
-                mem_record = db_data["learning_memory"].get(img_hash)
-                
-                if mem_record and mem_record.get("asset") == asset:
-                    prev_result = mem_record.get("result")
-                    if prev_result == "Loss":
-                        if "BUY" in action:
-                            action = "SELL (PUT 🔴)"
-                        else:
-                            action = "BUY (CALL 🟢)"
-                        conf = 95
-                        note = "Adaptive correction: Signal inverted based on past loss memory."
-                    elif prev_result == "Win":
-                        conf = 98
-                        note = "Pattern matched: Verified high-accuracy chart configuration."
+            note = ""
+            mem_record = db_data["learning_memory"].get(img_hash)
+            
+            if mem_record and mem_record.get("asset") == asset:
+                prev_result = mem_record.get("result")
+                if prev_result == "Loss":
+                    if "BUY" in action:
+                        action = "SELL (PUT 🔴)"
+                    else:
+                        action = "BUY (CALL 🟢)"
+                    conf = 95
+                    note = "Adaptive correction: Signal inverted based on past loss memory."
+                elif prev_result == "Win":
+                    conf = 98
+                    note = "Pattern matched: Verified high-accuracy chart configuration."
 
-                st.session_state.signal_data = {
-                    "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": "Quotex", "img_hash": img_hash, "note": note
-                }
-                
-                st.markdown("""
-                    <script>
-                        window.scrollTo({top: 0, behavior: 'smooth'});
-                    </script>
-                """, unsafe_allow_html=True)
-                
-                st.rerun()
+            st.session_state.signal_data = {
+                "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": "Quotex", "img_hash": img_hash, "note": note
+            }
+            
+            st.markdown("""
+                <script>
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                </script>
+            """, unsafe_allow_html=True)
+            
+            st.rerun()
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with col_chart:
-    # Exact Quotex to TradingView Global Symbol Mapper
-    tv_symbol_map = {
-        "EUR/USD (OTC)": "FX_IDC:EURUSD",
-        "GBP/USD (OTC)": "FX_IDC:GBPUSD",
-        "AUD/CAD (OTC)": "FX_IDC:AUDCAD",
-        "NZD/USD (OTC)": "FX_IDC:NZDUSD",
-        "USD/JPY (OTC)": "FX_IDC:USDJPY",
-        "USD/CHF (OTC)": "FX_IDC:USDCHF",
-        "EUR/JPY (OTC)": "FX_IDC:EURJPY",
-        "GBP/JPY (OTC)": "FX_IDC:GBPJPY",
-        "AUD/JPY (OTC)": "FX_IDC:AUDJPY",
-        "EUR/AUD (OTC)": "FX_IDC:EURAUD",
-        "USD/CAD (OTC)": "FX_IDC:USDCAD",
-        "CAD/JPY (OTC)": "FX_IDC:CADJPY",
-        "EUR/GBP (OTC)": "FX_IDC:EURGBP",
-        "AUD/USD (OTC)": "FX_IDC:AUDUSD",
-        "CHF/JPY (OTC)": "FX_IDC:CHFJPY",
-        "GOLD (OTC)": "OANDA:XAUUSD",
-        "SILVER (OTC)": "OANDA:XAGUSD"
-    }
-    current_tv_symbol = tv_symbol_map.get(asset, "FX_IDC:EURUSD")
-
-    st.markdown(f"""
-        <div style="background: #0b0f17; padding: 15px; border-radius: 16px; border: 1px solid rgba(0, 136, 255, 0.3); height: 575px;">
-            <h4 style="color: #0088ff; margin: 0 0 10px 0; font-size: 15px; font-weight: 900;">📈 Quotex Live Terminal: {asset}</h4>
-            <div style="height:515px;width:100%;">
-                <iframe scrolling="no" allowtransparency="true" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" style="box-sizing: border-box; height: 100%; width: 100%; border-radius: 10px;" src="https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22width%22%3A%22100%25%22%2C%22height%22%3A%22515%22%2C%22symbol%22%3A%22{current_tv_symbol}%22%2C%22interval%22%3A%221%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22locale%22%3A%22en%22%2C%22enable_publishing%22%3Afalse%22%2C%22hide_top_toolbar%22%3Afalse%22%2C%22save_image%22%3Afalse%22%2C%22calendar%22%3Afalse%22%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%7D"></iframe>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
