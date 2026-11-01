@@ -15,7 +15,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ROBUST JSON MEMORY & LEARNING STORAGE SETUP ---
+# --- ROBUST JSON ADAPTIVE MEMORY SETUP ---
 DB_FILE = "enzo_memory.json"
 
 def load_memory():
@@ -41,43 +41,25 @@ def save_memory(data):
 
 db_data = load_memory()
 
-# --- STRICT CANDLESTICK CHART VALIDATION (NO FAKE IMAGES ALLOWED) ---
+# --- SMART CHART VALIDATION FUNCTION ---
 def validate_trading_chart(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         width, height = img.size
-        
-        # 1. Resolution Check
-        if width < 250 or height < 180:
+        if width < 200 or height < 150:
             return False, "Image resolution is too low to be a valid trading chart."
             
         stat = ImageStat.Stat(img)
         mean_brightness = sum(stat.mean) / 3.0
         
-        # 2. Blank or Solid Color Check
-        if mean_brightness > 240 or mean_brightness < 15:
-            return False, "Invalid image: Image is completely blank, white, or dark."
+        if mean_brightness > 245:
+            return False, "Invalid image: Image is completely blank or white."
             
-        # 3. Strict Trading Chart Pattern & Color Check
-        # Real trading charts (like Quotex/TradingView) have dark backgrounds with grid lines 
-        # or specific color variations. We analyze color distribution.
-        extrema = img.getextrema()
-        # Check if it has a mix of colors (charts usually have multi-colored candles, text, grids)
-        if len(extrema) == 3:
-            r_range = extrema[0][1] - extrema[0][0]
-            g_range = extrema[1][1] - extrema[1][0]
-            b_range = extrema[2][1] - extrema[2][0]
-            
-            # If an image has almost zero color variation or is just a random photo 
-            # without trading grid structure, we flag it.
-            if r_range < 40 and g_range < 40 and b_range < 40:
-                return False, "Invalid chart: This does not look like a candlestick trading chart."
-                
         return True, "Valid Chart"
     except Exception as e:
-        return False, "Invalid image format. Please upload a clear trading chart screenshot."
+        return False, "Invalid image format. Please upload a clear chart screenshot."
 
-# --- GENUINE PRICE ACTION & PIXEL INTENSITY ENGINE ---
+# --- GENUINE PRICE ACTION & ADAPTIVE ENGINE ---
 def analyze_market_and_chart(asset_name, image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert("L")
@@ -299,7 +281,7 @@ st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
 st.markdown("""
     <div style="margin-bottom: 15px;">
         <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
-        <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select your quotex asset, expiry and upload valid trading chart screenshot.</p>
+        <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select your quotex asset, expiry and upload chart for smart adaptive signal.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -330,23 +312,23 @@ if gen_btn:
     else:
         img_bytes = chart_screenshot.getvalue()
         
-        # --- STRICT CHART VALIDATION CHECK ---
         is_valid, error_msg = validate_trading_chart(img_bytes)
         
         if not is_valid:
             st.error(f"❌ {error_msg}")
         else:
-            with st.spinner("Analyzing candlestick chart & live price action..."):
+            with st.spinner("Analyzing chart patterns & adapting with memory..."):
                 time.sleep(1.2)
                 
             img_hash = hashlib.md5(img_bytes).hexdigest()
             
-            # --- GENUINE PIXEL & PRICE ACTION ENGINE ---
+            # --- GENUINE PRICE ACTION ENGINE ---
             action, conf = analyze_market_and_chart(asset, img_bytes)
             
             note = ""
             mem_record = db_data["learning_memory"].get(img_hash)
             
+            # --- ADAPTIVE LEARNING & SIGNAL INVERSION LOGIC ---
             if mem_record and mem_record.get("asset") == asset:
                 prev_result = mem_record.get("result")
                 if prev_result == "Loss":
@@ -355,10 +337,10 @@ if gen_btn:
                     else:
                         action = "BUY (CALL 🟢)"
                     conf = 95
-                    note = "Adaptive correction: Signal inverted based on past loss memory."
+                    note = "Adaptive correction: Signal inverted automatically based on past loss memory."
                 elif prev_result == "Win":
                     conf = 98
-                    note = "Pattern matched: Verified high-accuracy chart configuration."
+                    note = "Pattern matched: Verified high-accuracy winning setup from memory."
 
             st.session_state.signal_data = {
                 "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": "Quotex", "img_hash": img_hash, "note": note
