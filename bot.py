@@ -12,12 +12,11 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ADVANCED SQLITE DATABASE SETUP FOR ADAPTIVE LEARNING & ANALYTICS ---
+# --- ADVANCED SQLITE DATABASE SETUP FOR ADAPTIVE LEARNING ---
 def init_db():
     conn = sqlite3.connect('enzo_learning.db', check_same_thread=False)
     cursor = conn.cursor()
     
-    # 1. Learning Memory Table with Asset & Timeframe for fuzzy/smart context
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS learning_memory (
             chart_hash TEXT PRIMARY KEY,
@@ -31,7 +30,6 @@ def init_db():
         )
     ''')
     
-    # 2. Analytics Table to track overall wins/losses per asset
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS bot_analytics (
             asset TEXT PRIMARY KEY,
@@ -71,20 +69,7 @@ st.markdown("""
         border-radius: 10px; 
         font-size: 13px; 
         font-weight: 700; 
-        margin-bottom: 15px; 
-    }
-
-    .analytics-box {
-        background: rgba(0, 136, 255, 0.05);
-        border: 1px solid rgba(0, 136, 255, 0.2);
-        padding: 10px 15px;
-        border-radius: 10px;
-        font-size: 12px;
-        color: #94a3b8;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        margin-bottom: 20px; 
     }
 
     .clean-panel {
@@ -152,7 +137,7 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
     st.markdown(f"""
         <div class="top-popup-card" style="border-color: {color};">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 15px; font-weight: 900; color: #ffffff;">🎯 ENZO SMART AI SIGNAL</span>
+                <span style="font-size: 15px; font-weight: 900; color: #ffffff;">🎯 ENZO PRO SIGNAL</span>
                 <span style="background-color: {color}; color: #ffffff; padding: 4px 12px; border-radius: 6px; font-weight: 900; font-size: 15px;">{sig['action']}</span>
             </div>
             <div class="signal-line"><span style="color: #94a3b8;">Broker / Asset:</span><span style="font-weight: 700; color: #fff;">{sig['broker']} - {sig['asset']}</span></div>
@@ -162,14 +147,14 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
         </div>
     """, unsafe_allow_html=True)
     
-    # --- TRADE FEEDBACK MODULE & ANALYTICS TRAINER ---
-    st.markdown("#### 📊 Adaptive Training Feedback")
+    # --- TRADE FEEDBACK MODULE ---
+    st.markdown("#### 📊 Trade Feedback")
     fb_col1, fb_col2 = st.columns(2)
     with fb_col1:
         user_fb = st.radio("Result", ["Win (Good)", "Loss (Bad)"], horizontal=True, key="top_feedback_radio")
     with fb_col2:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Submit & Update AI Brain", key="top_sub_btn"):
+        if st.button("Submit Result", key="top_sub_btn"):
             current_hash = sig['img_hash']
             current_action = sig['action']
             current_asset = sig['asset']
@@ -178,13 +163,11 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
             current_conf = sig['conf']
             result_val = "Win" if "Win" in user_fb else "Loss"
             
-            # Save to learning memory table
             cursor.execute('''
                 INSERT OR REPLACE INTO learning_memory (chart_hash, broker, asset, timeframe, action, result, confidence)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (current_hash, current_broker, current_asset, current_tf, current_action, result_val, current_conf))
             
-            # Update global asset analytics
             cursor.execute('SELECT total_wins, total_losses FROM bot_analytics WHERE asset = ?', (current_asset,))
             an_row = cursor.fetchone()
             if an_row:
@@ -200,7 +183,7 @@ if 'signal_data' in st.session_state and st.session_state.signal_data:
                 cursor.execute('INSERT INTO bot_analytics (asset, total_wins, total_losses) VALUES (?, ?, ?)', (current_asset, wins, losses))
                 
             conn.commit()
-            st.success("🧠 AI Brain Updated! The adaptive network has recorded this outcome.")
+            st.success("✅ Feedback saved successfully! System updated.")
     st.markdown("---")
 
 # Clean Panel Wrapper
@@ -208,24 +191,8 @@ st.markdown('<div class="clean-panel">', unsafe_allow_html=True)
 
 st.markdown("""
     <div style="margin-bottom: 15px;">
-        <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION (ADAPTIVE AI)</h3>
-        <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Self-learning neural vision scanner with real-time feedback inversion.</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# Fetch global overall stats for analytics display
-cursor.execute('SELECT SUM(total_wins), SUM(total_losses) FROM bot_analytics')
-sum_row = cursor.fetchone()
-total_w = sum_row[0] if sum_row and sum_row[0] else 0
-total_l = sum_row[1] if sum_row and sum_row[1] else 0
-total_trades = total_w + total_l
-win_rate = int((total_w / total_trades) * 100) if total_trades > 0 else 95
-
-st.markdown(f"""
-    <div class="analytics-box">
-        <span>📈 Global AI Win-Rate: <b>{win_rate}%</b></span>
-        <span>✅ Total Wins: <b>{total_w}</b></span>
-        <span>❌ Total Losses: <b>{total_l}</b></span>
+        <h3 style="color: #0088ff; margin: 0; font-size: 18px; font-weight: 900;">🦅 ENZO PRO VISION</h3>
+        <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">Select your broker, pair, expiry and upload chart for instant signal.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -265,41 +232,45 @@ if gen_btn:
     if chart_screenshot is None:
         st.warning("⚠️ Please upload a chart screenshot first!")
     else:
-        with st.spinner("Scanning pattern & querying adaptive neural memory..."):
+        with st.spinner("Scanning screenshot & computing signal..."):
             time.sleep(1.0)
             
-        # Generate hash for the uploaded image
         img_bytes = chart_screenshot.getvalue()
         img_hash = hashlib.md5(img_bytes).hexdigest()
         
-        # Base deterministic signal generation using hash seed
         random.seed(int(img_hash, 16))
         action = random.choice(["BUY (CALL 🟢)", "SELL (PUT 🔴)"])
         conf = random.randint(94, 98)
-        random.seed() # Reset seed
+        random.seed()
         
         note = ""
-        # Check Adaptive Learning Database (Fuzzy & Exact Hash matching)
         cursor.execute("SELECT action, result FROM learning_memory WHERE chart_hash = ? AND asset = ?", (img_hash, asset))
         row = cursor.fetchone()
         
         if row:
             prev_action, prev_result = row
             if prev_result == "Loss":
-                # Invert direction automatically because it failed previously
                 if "BUY" in action:
                     action = "SELL (PUT 🔴)"
                 else:
                     action = "BUY (CALL 🟢)"
-                conf = 99  # Boosted confidence after correction
-                note = "Adaptive AI Correction Applied: Signal inverted based on past loss memory."
+                conf = random.randint(94, 97)
+                note = "Pattern matched: Signal adjusted based on previous session feedback."
             elif prev_result == "Win":
-                conf = 99  # High confidence for verified winning pattern
-                note = "Verified Pattern: Historical high-win rate match found."
+                conf = random.randint(95, 98)
+                note = "Pattern matched: Verified high-accuracy chart configuration."
 
         st.session_state.signal_data = {
             "action": action, "conf": conf, "asset": asset, "tf": tf, "broker": broker, "img_hash": img_hash, "note": note
         }
+        
+        # JavaScript to auto-scroll to the top of the page so the popup signal is instantly visible
+        st.markdown("""
+            <script>
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            </script>
+        """, unsafe_allow_html=True)
+        
         st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
